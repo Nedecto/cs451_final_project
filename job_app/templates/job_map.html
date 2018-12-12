@@ -1,0 +1,105 @@
+<!-- job_map.html -->
+{% extends "base.html" %}
+
+{% block content_body %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
+
+    <div class="row">
+      <div class="col-md-10">
+        <form id="item_selection_form" method="post">{% csrf_token %}
+          <h2>List of All Jobs</h2>
+          <ul class="list_unstyled">
+          {% for job in jobs %}
+            <li>
+              <input type="checkbox" name="jobs" value="{{ job.pk }}"> {{ job.title }}
+            </li>
+          {% endfor %}
+          </ul>
+          <button type="submit" id="submit_btn">submit</button>
+        </form>
+        <div class="col" id="result_display">
+        <div id="map" style="height: 360px"></div>
+          <div class="row">
+            <div class="col-md-12">
+              <h4>Your Requested Jobs</h4>
+              <ul id="results_list"></ul>
+            </div>
+          </div>
+        </div>
+        </div>  
+      </div>
+    </div>
+
+  <script type="text/javascript"> 
+    var map = L.map('map').setView([35.59, -105.22], 5);
+    L.marker([35.59, -105.22]).addTo(map).bindPopup("Home").openPopup(); //initializing home location
+
+    var circle = L.circle([35.595, -105.221], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: 160934 //radius of 100 miles in meters
+    }).addTo(map);
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1Ijoicm1lZGluYW5taHUiLCJhIjoiY2pubTQzNmhvMDA1azNxcG4xZTN2dWYzNCJ9.LdJjEtD63ftd9WHo4dh15g'
+    }).addTo(map);
+
+    var marker_layer = L.layerGroup().addTo(map);
+    var baseURL = "{% url 'job_map_rest' %}";
+
+    var searchForm = document.querySelector('form');
+    var results_list = document.querySelector('#results_list');
+
+    searchForm.addEventListener('submit', getresults);
+    function getresults(e) {
+      e.preventDefault();
+      var form_data = {body: new FormData(e.target), method: "post"}
+
+      fetch(baseURL, form_data)
+          .then( function(response) {
+              return response.json();
+          })
+          .then( function(json) { 
+              // Handle json response here and manipulate dom as needed.
+              console.log(json);
+              while (results_list.hasChildNodes()) {  
+                results_list.removeChild(results_list.firstChild);
+              }
+              marker_layer.clearLayers();
+
+              for (let i of json['locations']) {
+                var job_name = document.createElement('li');
+                var text = "Job: " + i.title
+                job_name.textContent = text;
+                results_list.appendChild(job_name);
+
+                var job_salary = document.createElement('P');
+                var text = "Salary: " + i.salary
+                job_salary.textContent = text;
+                results_list.appendChild(job_salary);
+
+                var job_city = document.createElement('p');
+                var text = "City: " + i.city
+                job_city.textContent = text;
+                results_list.appendChild(job_city);
+
+                var lat = i.lat;
+                var lon = i.lon;
+
+                var marker = L.marker([lat, lon]).addTo(marker_layer);
+                marker.bindPopup(i.title);
+              }
+          });
+    }
+
+  </script>
+{% endblock %}

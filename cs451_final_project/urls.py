@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from job_app.views import job, jobs
+from job_app.views import HomeView, JobView, JobListView, JobsResultsRestView, SelectJobsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', HomeView.as_view(), name='home'),
     path('job/<int:pk>', JobView.as_view(), name='job'),
     path('jobs/', JobListView.as_view(), name='jobs'),
+    path('jobmap/', SelectJobsView.as_view(), name='job_map'),
+    path('jobmap/rest/', JobsResultsRestView.as_view(), name='job_map_rest'),
 
 ]

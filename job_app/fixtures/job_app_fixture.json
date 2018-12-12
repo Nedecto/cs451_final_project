@@ -1,0 +1,57 @@
+[
+{
+    "model": "job_app.job",
+    "pk": 1,
+    "fields": {
+        "title": "Software Analyst",
+        "salary": 80000,
+        "city": "Algodones",
+        "latitude": 35.38,
+        "longitude": -106.47
+    }
+},
+{
+    "model": "job_app.job",
+    "pk": 2,
+    "fields": {
+        "title": "Software Engineer",
+        "salary": 90000,
+        "city": "Belen",
+        "latitude": 34.65,
+        "longitude": -106.77
+    }
+},
+{
+    "model": "job_app.job",
+    "pk": 3,
+    "fields": {
+        "title": "Senior Software Analyst",
+        "salary": 120000,
+        "city": "Bernalillo",
+        "latitude": 35.31,
+        "longitude": -106.55
+    }
+},
+{
+    "model": "job_app.job",
+    "pk": 4,
+    "fields": {
+        "title": "Senior Software Engineer",
+        "salary": 150000,
+        "city": "Bluewater",
+        "latitude": 35.27,
+        "longitude": -107.98
+    }
+},
+{
+    "model": "job_app.job",
+    "pk": 5,
+    "fields": {
+        "title": "Software Engineer",
+        "salary": 180000,
+        "city": "Bosque",
+        "latitude": 34.49,
+        "longitude": -106.84
+    }
+},
+]
